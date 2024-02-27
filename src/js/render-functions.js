@@ -31,3 +31,7 @@ export function addMarkup(date){
     </ul>
   </li>`).join("");
 }
+
+export function loading(tag){
+  tag.innerHTML = '<span class="loader"></span>';
+}

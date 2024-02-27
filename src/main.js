@@ -4,6 +4,7 @@ import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 import { getImages } from "./js/pixabay-api";
 import { addMarkup } from "./js/render-functions";
+import { loading } from "./js/render-functions";
 
 const galleryForm = document.querySelector(".gallery-form");
 const search = document.querySelector(".gallery-search")
@@ -15,20 +16,27 @@ const option = {
     captionDelay: 250,
   };
 
+let gallery = new SimpleLightbox('.gallery a', option);
+
 galleryForm.addEventListener("submit", event => {
     event.preventDefault();
-    images = getImages(search.value);
-    if(!images.total){
-        iziToast.error({
-            message: 'Sorry, there are no images matching your search query. Please try again!',
-            position: 'topRight',
-        });
-    }
-    // document.body.insertAdjacentHTML("beforeend", addMarkup(images.hits));
+    galleryList.innerHTML = "";
+    loading(galleryList)
+
+    images = getImages(search.value.trim());
+    console.log(images);
     images.then(data => {
-        galleryList.insertAdjacentHTML("beforeend", addMarkup(data.hits));
-    })
+        if(!data.total){
+            iziToast.error({
+                message: 'Sorry, there are no images matching your search query. Please try again!',
+                position: 'topRight',
+            });
+            
+        }else{
+            galleryList.insertAdjacentHTML("beforeend", addMarkup(data.hits));
+            gallery.refresh();
+        }
+    }).finally(() => document.querySelector('.loader').remove())
 })
 
-let gallery = new SimpleLightbox('.gallery a', option);
 
