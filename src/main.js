@@ -20,11 +20,12 @@ let gallery = new SimpleLightbox('.gallery a', option);
 
 galleryForm.addEventListener("submit", event => {
     event.preventDefault();
+    if(search.value.trim() ===""){
+        return;
+    }
     galleryList.innerHTML = "";
     loading(galleryList)
-
     images = getImages(search.value.trim());
-    console.log(images);
     images.then(data => {
         if(!data.total){
             iziToast.error({
